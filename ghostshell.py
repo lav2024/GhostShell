@@ -34,8 +34,72 @@ def check_risks(command):
     return list(dict.fromkeys(warnings))
 
 
+def explain_known_command(command):
+    """Explain selected commands using predefined Python rules."""
+    parts = command.strip().split()
+
+    if not parts:
+        return None
+
+    name = parts[0].lower()
+
+    if name == "mkdir":
+        options = [
+            part for part in parts[1:]
+            if part.startswith("-")
+        ]
+        paths = [
+            part for part in parts[1:]
+            if not part.startswith("-")
+        ]
+
+        if not paths:
+            return (
+                "Purpose: mkdir creates a new directory.\n"
+                "Caution: Provide a directory name to create."
+            )
+
+        if "-p" in options:
+            return (
+                f"Purpose: Creates directory path(s): {', '.join(paths)}.\n"
+                "Options: -p creates parent directories as needed "
+                "and does not fail just because a directory already exists."
+            )
+
+        return (
+            f"Purpose: Creates a directory named {', '.join(paths)}.\n"
+            "Caution: Creating a directory that already exists "
+            "may produce an error."
+        )
+
+    if name == "cd":
+        if len(parts) == 1:
+            return (
+                "Purpose: Changes the current directory. "
+                "With no path, its behavior depends on the shell."
+            )
+
+        path = " ".join(parts[1:])
+        if path == "..":
+            return (
+                "Purpose: Changes the current directory "
+                "to its parent directory."
+            )
+
+        return f"Purpose: Changes the current directory to {path}."
+
+    return None
+
+
 def ask_ghost(command):
-    
+    """Use known explanations first, then ask the local AI."""
+    known_explanation = explain_known_command(command)
+
+    if known_explanation is not None:
+        print("\n👻 The Ghost whispers:\n")
+        print(known_explanation)
+        return
+
     prompt = f"""
 You are GhostShell, a concise and accurate terminal command explainer.
 
@@ -60,14 +124,13 @@ Options: ... (only when relevant)
 Caution: ... (only when relevant)
 """
 
-
     data = {
-    "model": MODEL,
-    "prompt": prompt,
-    "stream": False,
-    "options": {
-        "num_predict": 120,
-        "temperature": 0.2
+        "model": MODEL,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "num_predict": 120,
+            "temperature": 0.2
         }
     }
 
