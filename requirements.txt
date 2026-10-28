@@ -1,0 +1,2 @@
+# GhostShell currently uses only Python standard-library modules.
+# Ollama must be installed separately: https://ollama.com/
