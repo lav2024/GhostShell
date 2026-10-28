@@ -9,10 +9,11 @@ GhostShell is designed to explain commands, not execute them.
 ## ✨ Features
 
 - **Local AI explanations:** Uses Llama 3.2 1B through Ollama.
-- **Risk detection:** Flags selected potentially destructive commands.
+- **Known-command explanations:** Provides predefined explanations for `mkdir` and `cd`.
+- **Risk detection:** Flags selected potentially destructive command patterns.
 - **Continuous interaction:** Enter multiple commands in one session.
-- **Automated tests:** Includes unit tests for the rule-based safety checker.
-- **Privacy-conscious design:** Sends prompts to a local Ollama service instead of a hosted AI API.
+- **Automated tests:** Includes unit tests for safety checks and known-command explanations.
+- **Privacy-conscious design:** Uses a locally running Ollama service instead of a hosted AI API for command explanations.
 
 ## 🛠️ Technology Stack
 
@@ -36,7 +37,7 @@ GhostShell is designed to explain commands, not execute them.
 Clone the repository:
 
 ```bash
-git clone <your-github-repository-url>
+git clone https://github.com/lav2024/GhostShell.git
 cd GhostShell
 ```
 
@@ -58,15 +59,23 @@ Run the automated tests with:
 py -m unittest -v test_ghostshell.py
 ```
 
-The tests cover ordinary commands, recursive deletion, shutdown commands, command separators, and case-insensitive matching.
+The tests cover:
+
+- Ordinary command handling
+- Recursive deletion warnings
+- Shutdown command warnings
+- Command separator detection
+- Case-insensitive risk matching
+- Known-command explanations for `mkdir` and `cd`
+- Handling of unknown commands by the rule-based explanation function
 
 ## 🛡️ Safety and Limitations
 
-- GhostShell does not execute the commands entered by the user.
-- Risk detection uses predefined text patterns and can miss dangerous commands or flag harmless input.
+- GhostShell does not execute commands entered by the user.
+- Risk detection relies on predefined text patterns and may miss dangerous commands or flag harmless input.
 - AI-generated explanations may be inaccurate. Verify commands before running them yourself.
 - Local inference requires Ollama and the selected model to be installed.
-- Prompts are sent to the local Ollama service configured in the application.
+- Command prompts are sent to the locally configured Ollama service.
 
 GhostShell is an educational project, not a complete command security system.
 
@@ -76,4 +85,4 @@ Explore how local open-weight language models and rule-based checks can work tog
 
 ## 📄 License
 
-This project is open source. A license has not yet been selected.
+This project is licensed under the [MIT License](LICENSE).
